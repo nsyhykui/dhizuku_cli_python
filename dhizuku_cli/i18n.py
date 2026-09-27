@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # dcli - 通过 TCP 调用 Dhizuku 的 DO 命令工具
 # Copyright (C) 2026 nsyhykui
 #
@@ -15,33 +14,57 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# -*- coding: utf-8 -*-
 """
-Language strings for dhizuku-cli.
-
-Detects language from $LANG environment variable.
+Language strings and color helpers for dhizuku-cli.
 """
 
 import os
+import sys
 
 _LANG = os.environ.get("LANG", "en").lower()
 IS_ZH = _LANG.startswith("zh")
+
+
+def _use_color():
+    if os.environ.get("NO_COLOR"):
+        return False
+    try:
+        return sys.stderr.isatty()
+    except Exception:
+        return False
+
+
+_USE_COLOR = _use_color()
+_RED    = "\033[31m" if _USE_COLOR else ""
+_YELLOW = "\033[33m" if _USE_COLOR else ""
+_RESET  = "\033[0m"  if _USE_COLOR else ""
+
+
+def err(text):
+    """错误输出：stderr + 红字。"""
+    print(_RED + text + _RESET, file=sys.stderr)
+
+
+def warn(text):
+    """警告输出：stderr + 黄字。"""
+    print(_YELLOW + text + _RESET, file=sys.stderr)
 
 
 _S = {
     "en": {
         "usage": "Usage:",
         "opt_host": "  --host, -H <ip>      Server IP (default 127.0.0.1)",
+        "opt_version": "  --version, -V        Show version",
+        "opt_help": "  --help, -h           Show help",
         "opt_end": "  --                   Stop option parsing",
         "available": "Available commands:",
-        "remote": "Remote examples:",
         "or_env": "  or env:",
         "or_file": "  or file:",
         "examples": "Examples:",
         "unknown_cmd": "Unknown command: %s",
-        "see_help": "Run 'dcli help' for all commands",
         "usage_short": "Usage:  %s",
         "desc": "Desc:   %s",
-        "example": "Example: %s",
         "err_no_key": "Error: no key found",
         "err_key_hint1": "Copy the key from the App to ~/.dcli_key",
         "err_key_hint2": "or set env DCLI_KEY",
@@ -57,17 +80,16 @@ _S = {
     "zh": {
         "usage": "用法:",
         "opt_host": "  --host, -H <ip>      服务端 IP（默认 127.0.0.1）",
+        "opt_version": "  --version, -V        显示版本",
+        "opt_help": "  --help, -h           显示帮助",
         "opt_end": "  --                   停止解析后续选项",
         "available": "可用命令:",
-        "remote": "远程连接示例:",
         "or_env": "  或环境变量:",
         "or_file": "  或写入文件:",
         "examples": "示例:",
         "unknown_cmd": "未知命令: %s",
-        "see_help": "用 'dcli help' 查看所有命令",
         "usage_short": "用法:  %s",
         "desc": "说明:  %s",
-        "example": "示例:  %s",
         "err_no_key": "错误: 未找到密钥",
         "err_key_hint1": "请从 App 复制密钥，写入 ~/.dcli_key",
         "err_key_hint2": "或设置环境变量 DCLI_KEY",
@@ -84,5 +106,4 @@ _S = {
 
 
 def t(key):
-    """返回当前语言的字符串。"""
     return _S["zh" if IS_ZH else "en"].get(key, key)

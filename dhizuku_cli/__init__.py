@@ -17,9 +17,7 @@
 # -*- coding: utf-8 -*-
 """
 dhizuku-cli - Dhizuku Device Owner command-line client.
-
-Communicates over TCP with TOTP authentication and AES-GCM encryption.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "nsyhykui"
