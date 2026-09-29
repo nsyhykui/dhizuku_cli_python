@@ -70,8 +70,8 @@ def query_server_version(host, key, timeout_sec=3):
     except Exception:
         return None
 
-    if result.startswith("Success "):
-        return result[len("Success "):].strip()
-    if result.startswith("Unknown"):
+    if not result:
+        return None
+    if result == "Unknown":
         return "unknown"
-    return None
+    return result

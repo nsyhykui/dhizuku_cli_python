@@ -19,5 +19,5 @@
 dhizuku-cli - Dhizuku Device Owner command-line client.
 """
 
-__version__ = "1.1.0"
+__version__ = "2.0.0"
 __author__ = "nsyhykui"

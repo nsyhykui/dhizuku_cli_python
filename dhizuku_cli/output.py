@@ -22,26 +22,38 @@
 from .i18n import warn, err
 
 
-_ERROR_PREFIXES = ("Error:", "Failed:", "Denied",
-                   "timeout", "crypto: denied", "totp: denied", "uid: denied")
+_ERROR_PREFIXES = (
+    "Failed:", "Error:", "Denied",
+    "timeout",
+    "crypto: denied",
+    "totp: denied",
+    "uid: denied",
+)
+
+
+def is_error_line(line):
+    for p in _ERROR_PREFIXES:
+        if line.startswith(p):
+            return True
+    return False
 
 
 def print_response(reply):
     """
     按行分流。返回 True 表示有错误行（退出码应为 1）。
+    空响应返回 False。
     """
+    if not reply:
+        return False
+
     has_error = False
 
     for line in reply.split("\n"):
         if line.startswith("Warning:"):
             warn(line)
-        elif any(line == p or line.startswith(p) for p in _ERROR_PREFIXES):
+        elif is_error_line(line):
             err(line)
             has_error = True
-        elif line == "Success":
-            print("Success")
-        elif line.startswith("Success "):
-            print(line[len("Success "):])
         else:
             print(line)
 

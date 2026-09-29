@@ -22,9 +22,9 @@
 import sys
 import socket
 
-from .i18n import t, err
+from .i18n import t, IS_ZH, err
 from .crypto import CRYPTO_OK
-from .config import load_key, load_host
+from .config import DEFAULT_PORT, load_key, load_host
 from .args import parse as parse_args
 from .net import send_command, query_server_version
 from .output import print_response
@@ -32,6 +32,34 @@ from . import help as help_mod
 
 
 TIMEOUT_NORMAL = 65
+TIMEOUT_VERSION = 3
+
+
+def do_status(host, key):
+    """本地处理 dcli status：用 ping 包装。"""
+    try:
+        reply = send_command(host, "ping", key, TIMEOUT_VERSION)
+    except Exception:
+        reply = None
+
+    if reply is None:
+        state = "未运行" if IS_ZH else "Not running"
+    elif reply == "Success":
+        state = "正在运行（已授权）" if IS_ZH else "Running (authorized)"
+    elif reply == "uid: denied":
+        state = "正在运行（未授权）" if IS_ZH else "Running (unauthorized)"
+    elif reply == "totp: denied":
+        state = "正在运行（TOTP 验证失败）" if IS_ZH else "Running (TOTP failed)"
+    elif reply == "crypto: denied":
+        state = "正在运行（解密失败）" if IS_ZH else "Running (crypto failed)"
+    else:
+        state = "正在运行（状态未知）" if IS_ZH else "Running (unknown)"
+
+    print("%s: %s" % ("服务端状态" if IS_ZH else "Server status", state))
+    print("%s: %s" % ("服务端IP" if IS_ZH else "Server IP", host))
+    print("%s: %d" % ("服务端端口" if IS_ZH else "Server port", DEFAULT_PORT))
+    print("%s: TCP" % ("模式" if IS_ZH else "Mode"))
+    return 0
 
 
 def main():
@@ -42,7 +70,7 @@ def main():
 
     host_arg, is_version, args = parse_args(sys.argv[1:])
 
-    # --version / -V
+    # --version
     if is_version:
         key = load_key()
         if not key:
@@ -71,17 +99,19 @@ def main():
         help_mod.print_command(args[0])
         return 0
 
-    # status 本地帮助
-    if args[0] == "status":
-        if len(args) == 1:
-            help_mod.print_status()
+    # 顶层命令无子命令 → 本地帮助
+    if len(args) == 1:
+        if args[0] == "list":
+            help_mod.print_list()
             return 0
-        if len(args) == 2 and args[1] == "permission":
-            help_mod.print_status_permission()
+        if args[0] == "pm":
+            help_mod.print_pm()
+            return 0
+        if args[0] == "cache":
+            help_mod.print_cache()
             return 0
 
-    cmd_line = " ".join(args)
-
+    # 读密钥
     key = load_key()
     if not key:
         err(t("err_no_key"))
@@ -91,6 +121,12 @@ def main():
 
     host = load_host(host_arg)
 
+    # dcli status → 本地处理
+    if len(args) == 1 and args[0] == "status":
+        return do_status(host, key)
+
+    # 发送
+    cmd_line = " ".join(args)
     try:
         result = send_command(host, cmd_line, key, TIMEOUT_NORMAL)
     except socket.timeout:
