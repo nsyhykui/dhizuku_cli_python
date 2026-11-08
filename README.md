@@ -6,7 +6,7 @@ A Python client that talks to the dhizuku-cli Android server app,
 executes Device Owner commands via Dhizuku.
 
 > Server app / 服务端 App:
-> https://github.com/nsyhykui/dhizuku-cli
+> https://github.com/nsyhykui/Dhizuku-Cli
 
 ---
 
@@ -17,7 +17,7 @@ executes Device Owner commands via Dhizuku.
 This is the Python client for dhizuku-cli.
 
 The Android server app is in the main repository:
-https://github.com/nsyhykui/dhizuku-cli
+https://github.com/nsyhykui/Dhizuku-Cli
 
 It communicates with the Android server app over TCP, using TOTP for
 authentication and AES-GCM for encryption. The server app executes
@@ -61,6 +61,9 @@ Operation commands:
 | hide / unhide | Hide / unhide an app |
 | suspend / resume | Suspend / resume an app |
 | block_uninstall / unblock_uninstall | Block / allow uninstall |
+| camera_off / camera_on | Disable / enable the camera |
+| screencap_off / screencap_on | Disable / enable screen capture |
+| screen_timeout <seconds> | Set maximum time to lock screen (0 to clear) |
 
 Query commands:
 
@@ -127,6 +130,13 @@ Priority: command-line > env var > current dir file > home dir file > default.
 
 ### Changelog
 
+#### v2.1.0
+
+- Added camera_off / camera_on (setCameraDisabled)
+- Added screencap_off / screencap_on (setScreenCaptureDisabled)
+- Added screen_timeout <seconds> (setMaximumTimeToLock, 0 to clear)
+- Updated command help and examples
+
 #### v2.0.0
 
 - Breaking change: command structure and output protocol changed
@@ -159,7 +169,7 @@ Priority: command-line > env var > current dir file > home dir file > default.
 这是 dhizuku-cli 的 Python 客户端。
 
 服务端 Android App 在主仓库：
-https://github.com/nsyhykui/dhizuku-cli
+https://github.com/nsyhykui/Dhizuku-Cli
 
 它通过 TCP 与 Android 服务端通信，用 TOTP 做认证，用 AES-GCM 加密。
 服务端通过 Dhizuku 执行 Device Owner 命令。
@@ -202,6 +212,9 @@ https://github.com/nsyhykui/dhizuku-cli
 | hide / unhide | 隐藏 / 取消隐藏应用 |
 | suspend / resume | 挂起 / 恢复应用 |
 | block_uninstall / unblock_uninstall | 阻止 / 允许卸载 |
+| camera_off / camera_on | 禁用 / 恢复摄像头 |
+| screencap_off / screencap_on | 禁止 / 允许截屏 |
+| screen_timeout <秒> | 设置最大息屏时间（填 0 恢复系统默认） |
 
 查询类命令：
 
@@ -266,6 +279,13 @@ pm list packages 的参数和 Android 自带的 pm list packages 一致：
 - 不要在不可信网络上开启局域网模式。
 
 ### 更新日志
+
+#### v2.1.0
+
+- 新增 camera_off / camera_on（禁用/恢复摄像头）
+- 新增 screencap_off / screencap_on（禁止/允许截屏）
+- 新增 screen_timeout <秒>（设置最大息屏时间，填 0 恢复默认）
+- 更新了命令帮助信息和示例
 
 #### v2.0.0
 

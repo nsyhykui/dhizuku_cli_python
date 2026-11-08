@@ -34,6 +34,12 @@ HELP = {
     "resume": {"desc": "恢复挂起" if IS_ZH else "Resume app"},
     "block_uninstall": {"desc": "阻止卸载" if IS_ZH else "Block uninstall"},
     "unblock_uninstall": {"desc": "允许卸载" if IS_ZH else "Unblock uninstall"},
+    "camera_off": {"desc": "禁用摄像头" if IS_ZH else "Disable camera"},
+    "camera_on": {"desc": "恢复摄像头" if IS_ZH else "Enable camera"},
+    "screencap_off": {"desc": "禁止截屏" if IS_ZH else "Disable screen capture"},
+    "screencap_on": {"desc": "允许截屏" if IS_ZH else "Enable screen capture"},
+    "screen_timeout": {"desc": "设置最大息屏时间（0 为恢复默认）" 
+                                if IS_ZH else "Set screen timeout (0 to clear)"},
     "status": {"desc": "显示服务端状态" if IS_ZH else "Show server status"},
     "list": {"desc": "列出隐藏/挂起/阻止卸载的应用"
                      if IS_ZH else "List hidden/suspended/blocked apps"},
@@ -67,6 +73,8 @@ def print_global():
     print(t("examples"))
     print("  dcli ping")
     print("  dcli list hidden")
+    print("  dcli camera_off")
+    print("  dcli screen_timeout 60")
     print("  dcli pm list packages -3")
     print("  dcli pm list permissions android.permission.CAMERA")
 
